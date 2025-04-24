@@ -5,7 +5,7 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
-from flask import Blueprint, render_template, request, jsonify, send_file
+from flask import Blueprint, render_template, request, jsonify, send_file, send_from_directory
 from flask_wtf.csrf import generate_csrf
 import os
 from werkzeug.utils import secure_filename
@@ -53,6 +53,24 @@ def add_movie():
 @main.route('/api/v1/csrf-token', methods=['GET'])
 def get_csrf():
         return jsonify({'csrf_token': generate_csrf()})
+
+@main.route('/api/v1/movies', methods=['GET'])
+def movies():
+    movies = Movie.query.all()
+    movie_list = []
+    for movie in movies:
+        movie_list.append({
+            "id": movie.id,
+            "title": movie.title,
+            "description": movie.description,
+            "poster": f"/api/v1/posters/{movie.poster}"
+        })
+    return jsonify({"movies": movie_list})
+
+@main.route('/api/v1/posters/<filename>')
+def get_poster(filename):
+    return send_from_directory(os.path.join(os.getcwd(), 'uploads'), filename)
+
 
 
 ###

@@ -2,6 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from .config import Config
+from flask_wtf.csrf import CSRFProtect
+
+csrf = CSRFProtect()
 
 
 db = SQLAlchemy()
@@ -13,6 +16,7 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
+    csrf.init_app(app) 
 
     from app import views,models
     app.register_blueprint(views.main)

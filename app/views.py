@@ -6,6 +6,7 @@ This file creates your application.
 """
 
 from flask import Blueprint, render_template, request, jsonify, send_file
+from flask_wtf.csrf import generate_csrf
 import os
 from werkzeug.utils import secure_filename
 from app.forms import MovieForm
@@ -48,6 +49,10 @@ def add_movie():
         return jsonify({
             "errors": form_errors(form)
         }), 400
+    
+@main.route('/api/v1/csrf-token', methods=['GET'])
+def get_csrf():
+        return jsonify({'csrf_token': generate_csrf()})
 
 
 ###
